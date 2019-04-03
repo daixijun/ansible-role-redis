@@ -1,4 +1,5 @@
 galaxy_info:
+  role_name: redis
   author: Xijun Dai <daixijun1990@gmail.com>
   description: Redis server
   company: '@daixijun1990'
