@@ -1,0 +1,60 @@
+---
+- name: Ensure redis is installed
+  package:
+    name: redis
+    state: present
+  registry: redis_install_status
+  until: redis_install_status is succeed
+  retries: 3
+
+- name: Create redis group
+  group:
+    name: redis
+    state: present
+    system: true
+
+- name: Create redis user
+  user:
+    name: redis
+    create_home: true
+    home: /var/lib/redis
+    group: redis
+    shell: /sbin/nologin
+    comment: Redis Server
+
+- name: Ensure data && configuration directory exists
+  file:
+    path: "{{ item }}"
+    recurse: yes
+    state: directory
+    owner: redis
+    group: redis
+  loop:
+    - '{{ redis_data_dir }}'
+    - /etc/redis
+
+- name: Configure
+  template:
+    src: redis.conf.j2
+    dest: /etc/redis/{{ redis_port }}.conf
+  notify:
+    - restart redis
+
+- name: startup for upstart
+  template:
+    src: redis.init.j2
+    dest: /etc/init.d/redis_{{ redis_port }}
+    mode: 0755
+  when: ansible_service_mgr == 'upstart'
+
+- name: startup for systemd
+  template:
+    src: redis.service.j2
+    dest: /etc/system/systemd/redis_{{ redis_port }}.service
+  when: ansible_service_mgr == 'systemd'
+
+- name: Ensure redis instance started
+  service:
+    enabled: yes
+    name: redis_{{ redis_port }}
+    state: started

@@ -1,0 +1,6 @@
+---
+- name: restart redis
+  service:
+    enabled: true
+    name: redis_{{ redis_port }}
+    state: restarted
