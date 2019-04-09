@@ -2,6 +2,15 @@
 sudo: required
 language: python
 
+python:
+  - "2.7"
+  - "3.5"
+  - "3.6"
+  - "3.7"
+
+virtualenv:
+  system_site_packages: true
+
 env:
   global:
     - ROLE_NAME: redis
@@ -11,12 +20,6 @@ env:
     - MOLECULE_DISTRO: ubuntu1804
     - MOLECULE_DISTRO: debian9
 
-matrix:
-  include:
-    - python: "2.7"
-    - python: "3.5"
-    - python: "3.6"
-    - python: "3.7"
 services:
   - docker
 
