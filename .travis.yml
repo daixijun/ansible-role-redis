@@ -1,6 +1,16 @@
 ---
 sudo: required
 language: python
+
+env:
+  global:
+    - ROLE_NAME: redis
+  matrix:
+    - MOLECULE_DISTRO: centos7
+    - MOLECULE_DISTRO: centos6
+    - MOLECULE_DISTRO: ubuntu1804
+    - MOLECULE_DISTRO: debian9
+
 matrix:
   include:
     - python: "2.7"
@@ -12,7 +22,8 @@ services:
 
 before_script:
   - cd ../
-  - mv daixijun/ansible-role-redis daixijun.redis
+  - mv ansible-role-${ROLE_NAME} daixijun.${ROLE_NAME}
+  - cd daixijun.${ROLE_NAME}
 
 install:
   - pip install molecule docker
