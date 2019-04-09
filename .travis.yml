@@ -2,35 +2,31 @@
 dist: xenial
 sudo: required
 language: python
-
-python:
-  - "3.3"
-  - "3.4"
-  - "3.5"
-  - "3.6"
-  - "3.7"
-  - "3.8-dev"
-  - "nightly"
-
-virtualenv:
-  system_site_packages: true
+branches:
+  only:
+    - master
+matrix:
+  include:
+    - python: 2.7
+    - python: 3.3
+    - python: 3.4
+    - python: 3.5
+    - python: 3.6
+    - python: 3.7
 
 env:
-  global:
-    - ROLE_NAME: redis
-  matrix:
-    - MOLECULE_DISTRO: centos7
-    - MOLECULE_DISTRO: centos6
-    - MOLECULE_DISTRO: ubuntu1804
-    - MOLECULE_DISTRO: debian9
+  - MOLECULE_DISTRO: centos7
+  - MOLECULE_DISTRO: centos6
+  - MOLECULE_DISTRO: ubuntu1804
+  - MOLECULE_DISTRO: debian9
 
 services:
   - docker
 
 before_script:
   - cd ../
-  - mv ansible-role-${ROLE_NAME} daixijun.${ROLE_NAME}
-  - cd daixijun.${ROLE_NAME}
+  - mv ansible-role-redis daixijun.redis
+  - cd daixijun.redis
 
 install:
   - pip install molecule docker
