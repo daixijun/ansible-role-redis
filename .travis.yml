@@ -15,7 +15,7 @@ before_script:
   - mv daixijun/ansible-role-redis daixijun.redis
 
 install:
-  - pip install --user molecule docker
+  - pip install molecule docker
 
 script:
   - molecule test
