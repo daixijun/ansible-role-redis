@@ -3,6 +3,12 @@ Redis
 
 Ansible redis role
 
+Requirements
+--------------
+
+* Centos/RHEL 6+
+* Ansible 2.5+
+
 Role Variables
 --------------
 

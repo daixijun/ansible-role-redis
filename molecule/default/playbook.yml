@@ -1,0 +1,11 @@
+---
+- name: Converge
+  hosts: all
+  become: yes
+  any_errors_fatal: true
+  roles:
+    - role: daixijun.redis
+      redis_disabled_commands:
+        - keys
+        - flushall
+      redis_password: test

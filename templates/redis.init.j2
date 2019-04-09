@@ -16,15 +16,15 @@
 # Source function library.
 . /etc/rc.d/init.d/functions
 
-name="redis-server"
-exec="/usr/bin/$name"
+name="redis_{{ redis_port }}"
+exec="/usr/bin/redis-server"
 shut="/usr/libexec/redis-shutdown"
-pidfile="/var/run/redis_{{ redis_port }}.pid"
+pidfile="/var/run/redis/{{ redis_port }}.pid"
 REDIS_CONFIG="/etc/redis/{{ redis_port }}.conf"
 
 # [ -e /etc/sysconfig/redis ] && . /etc/sysconfig/redis
 
-lockfile=/var/lock/subsys/redis_{{ redis_port }}
+lockfile=/var/lock/subsys/${name}
 
 start() {
     [ -f $REDIS_CONFIG ] || exit 6
@@ -60,7 +60,7 @@ restart() {
 }
 
 rh_status() {
-    status -p $pidfile $name
+    status -p $pidfile -l $lockfile $name
 }
 
 rh_status_q() {

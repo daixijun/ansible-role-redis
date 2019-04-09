@@ -210,7 +210,7 @@ slaveof {{ redis_slaveof }}
 #
 {% if redis_master_password %}
 masterauth {{ redis_master_password }}
-{% end %}
+{% endif %}
 # When a slave loses its connection with the master, or when the replication
 # is still in progress, the slave can act in two different ways:
 #
@@ -345,7 +345,10 @@ slave-priority 100
 # 150k passwords per second against a good box. This means that you should
 # use a very strong password otherwise it will be very easy to break.
 #
+# requirepass <PASSWORD>
+{% if redis_password %}
 requirepass {{ redis_password }}
+{% endif %}
 
 # Command renaming.
 #
@@ -364,7 +367,7 @@ requirepass {{ redis_password }}
 # rename-command CONFIG ""
 {% for command in redis_disabled_commands|list %}
 rename-command {{ command | upper }} ""
-{% endif %}
+{% endfor %}
 #
 # Please note that changing the name of commands that are logged into the
 # AOF file or transmitted to slaves may cause problems.

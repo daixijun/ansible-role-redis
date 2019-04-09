@@ -1,11 +1,17 @@
 ---
+- name: Load redis package vars
+  include_vars: "{{ ansible_os_family }}.yml"
+
+- name: Ensure epel repo is installed (RedHat)
+  yum:
+    name: epel-release
+    state: present
+  when: ansible_os_family == 'RedHat'
+
 - name: Ensure redis is installed
   package:
-    name: redis
+    name: '{{ redis_package }}'
     state: present
-  registry: redis_install_status
-  until: redis_install_status is succeed
-  retries: 3
 
 - name: Create redis group
   group:
@@ -32,11 +38,15 @@
   loop:
     - '{{ redis_data_dir }}'
     - /etc/redis
+    - /var/log/redis
+    - /var/run/redis
 
 - name: Configure
   template:
     src: redis.conf.j2
     dest: /etc/redis/{{ redis_port }}.conf
+    owner: redis
+    group: redis
   notify:
     - restart redis
 
@@ -45,16 +55,12 @@
     src: redis.init.j2
     dest: /etc/init.d/redis_{{ redis_port }}
     mode: 0755
-  when: ansible_service_mgr == 'upstart'
+  when: ansible_service_mgr in ['upstart','sysvinit']
 
 - name: startup for systemd
   template:
     src: redis.service.j2
-    dest: /etc/system/systemd/redis_{{ redis_port }}.service
+    dest: /lib/systemd/system/redis_{{ redis_port }}.service
   when: ansible_service_mgr == 'systemd'
-
-- name: Ensure redis instance started
-  service:
-    enabled: yes
-    name: redis_{{ redis_port }}
-    state: started
+  notify:
+    - daemon-reload

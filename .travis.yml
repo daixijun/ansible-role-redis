@@ -1,0 +1,15 @@
+---
+sudo: required
+lang: python
+services:
+  - docker
+
+before_script:
+  - cd ../
+  - mv ansible-role-redis daixijun.redis
+
+install:
+  - pip install molecule docker
+
+script:
+  - molecule test
