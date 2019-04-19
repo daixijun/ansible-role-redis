@@ -6,7 +6,7 @@ Wants=network-online.target
 
 [Service]
 ExecStart=/usr/bin/redis-server /etc/redis/{{ redis_port }}.conf --supervised systemd
-ExecStop=/usr/libexec/redis-shutdown
+ExecStop=/usr/libexec/redis-shutdown redis/{{ redis_port }}
 Type=notify
 User=redis
 Group=redis
