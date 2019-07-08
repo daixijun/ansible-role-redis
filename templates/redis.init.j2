@@ -17,8 +17,8 @@
 . /etc/rc.d/init.d/functions
 
 name="redis_{{ redis_port }}"
-exec="/usr/bin/redis-server"
-shut="/usr/libexec/redis-shutdown"
+exec="/usr/local/bin/redis-server"
+shut="/usr/local/libexec/redis-shutdown"
 pidfile="/var/run/redis/{{ redis_port }}.pid"
 REDIS_CONFIG="/etc/redis/{{ redis_port }}.conf"
 

@@ -1,66 +1,33 @@
 ---
-- name: Load redis package vars
-  include_vars: "{{ ansible_os_family }}.yml"
+- name: Install Redis
+  include_tasks: install.yml
+  tags:
+    - install
 
-- name: Ensure epel repo is installed (RedHat)
-  yum:
-    name: epel-release
-    state: present
-  when: ansible_os_family == 'RedHat'
-
-- name: Ensure redis is installed
-  package:
-    name: '{{ redis_package }}'
-    state: present
-
-- name: Create redis group
-  group:
-    name: redis
-    state: present
-    system: true
-
-- name: Create redis user
-  user:
-    name: redis
-    create_home: true
-    home: /var/lib/redis
-    group: redis
-    shell: /sbin/nologin
-    comment: Redis Server
-
-- name: Ensure data && configuration directory exists
-  file:
-    path: "{{ item }}"
-    recurse: yes
-    state: directory
-    owner: redis
-    group: redis
-  loop:
-    - '{{ redis_data_dir }}'
-    - /etc/redis
-    - /var/log/redis
-    - /var/run/redis
-
-- name: Configure
-  template:
-    src: redis.conf.j2
-    dest: /etc/redis/{{ redis_port }}.conf
-    owner: redis
-    group: redis
-  notify:
-    - restart redis
-
-- name: startup for upstart
-  template:
-    src: redis.init.j2
-    dest: /etc/init.d/redis_{{ redis_port }}
-    mode: 0755
-  when: ansible_service_mgr in ['upstart','sysvinit']
-
-- name: startup for systemd
-  template:
-    src: redis.service.j2
-    dest: /lib/systemd/system/redis_{{ redis_port }}.service
-  when: ansible_service_mgr == 'systemd'
-  notify:
-    - daemon-reload
+- name: Configuration redis instance
+  include_tasks: configure.yml
+  vars:
+    redis_port: "{{ item.port | default(6379) }}"
+    redis_disabled_commands: "{{ item.disabled_commands | default([]) }}"
+    redis_password: "{{ item.password | default('') }}"
+    redis_bind: "{{ item.bind | default('127.0.0.1') }}"
+    redis_unixsocket: "{{ item.unixsocket | default('') }}"
+    redis_timeout: "{{ item.timeout | default(0) }}"
+    redis_keepalive: "{{ item.keepalive | default(60) }}"
+    redis_loglevel: "{{ item.loglevel | default('warning') }}"
+    redis_logfile: "{{ item.logfile | default('/dev/null') }}"
+    redis_databases: "{{ item.databases | default(16) }}"
+    redis_slaveof: "{{ item.slaveof | default('') }}"
+    redis_master_password: "{{ item.master_password | default(item.password) | default('') }}"
+    redis_maxclients: "{{ item.maxclients | default(1000) }}"
+    redis_maxmemory: "{{ item.maxmemory | default('500mb') }}"
+    redis_maxmemory_policy: "{{ item.maxmemory_policy | default('volatile-lru') }}"
+    redis_appendonly: "{{ item.appendonly | default('yes') }}"
+    redis_appendfilename: "{{ item.appendfilename | default('appendonly.aof') }}"
+    redis_appendfsync: "{{ item.appendfsync | default('everysec') }}"
+  loop: "{{ redis_items }}"
+  no_log: true
+  when:
+    - redis_items|length > 0
+  tags:
+    - config

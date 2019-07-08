@@ -54,12 +54,6 @@ galaxy_info:
       versions:
         - 6
         - 7
-    - name: Debian
-      versions:
-        - stretch
-    - name: Ubuntu
-      versions:
-        - bionic
 
   galaxy_tags:
     - redis

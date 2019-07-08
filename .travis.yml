@@ -5,13 +5,15 @@ language: python
 branches:
   only:
     - master
-python: '3.7'
+python:
+ - '3.7'
+ - '2.7'
 
-env:
-  - MOLECULE_DISTRO=centos7
-  - MOLECULE_DISTRO=centos6
-  # - MOLECULE_DISTRO=ubuntu1804
-  - MOLECULE_DISTRO=debian9
+# env:
+#   - MOLECULE_DISTRO=centos7
+#   - MOLECULE_DISTRO=centos6
+#   # - MOLECULE_DISTRO=ubuntu1804
+#   - MOLECULE_DISTRO=debian9
 
 services:
   - docker
@@ -28,5 +30,8 @@ script:
   - molecule test
 
 notifications:
+  email: false
   webhooks:
-    - https://galaxy.ansible.com/api/v1/notifications/
+    on_success: change
+    urls:
+      - https://galaxy.ansible.com/api/v1/notifications/

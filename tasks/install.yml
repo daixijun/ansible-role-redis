@@ -1,0 +1,68 @@
+---
+- name: Install dependencies
+  yum:
+    name: jemalloc,jemalloc-devel,gcc,gcc-c++,make
+    state: present
+
+- name: Create redis group
+  group:
+    name: redis
+    state: present
+    system: true
+
+- name: Create redis user
+  user:
+    name: redis
+    create_home: true
+    home: /var/lib/redis
+    group: redis
+    shell: /sbin/nologin
+    comment: Redis Server
+
+- name: Check whether redis is already installed
+  stat:
+    path: /usr/local/bin/redis-server
+  register: redis_stat
+
+- name: Unarchive redis-{{ redis_version }}
+  unarchive:
+    src: https://mirror.azure.cn/redis/releases/redis-{{ redis_version }}.tar.gz
+    dest: /usr/local/src/
+    remote_src: yes
+    creates: /usr/local/src/redis-{{ redis_version }}
+  when:
+    - redis_upgrade or not redis_stat.stat.exists
+
+- name: make && make install
+  command: '{{ item }}'
+  args:
+    chdir: /usr/local/src/redis-{{ redis_version }}
+    removes: /usr/local/src/redis-{{ redis_version }}
+  with_items:
+    - make -j
+    - make install
+  when:
+    - redis_upgrade or not redis_stat.stat.exists
+  register: installed
+  notify:
+    - restart all redis
+
+- name: Copy redis-shutdown
+  template:
+    src: redis-shutdown.sh.j2
+    dest: /usr/local/libexec/redis-shutdown
+    owner: redis
+    group: redis
+    mode: 0644
+
+- name: Ensure redis related directory exists
+  file:
+    path: '{{ item }}'
+    state: directory
+    owner: redis
+    group: redis
+  loop:
+    - '{{ redis_data_dir }}'
+    - /etc/redis
+    - /var/log/redis
+    - /var/run/redis

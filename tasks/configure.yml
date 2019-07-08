@@ -1,0 +1,46 @@
+---
+- name: Ensure data && configuration directory exists
+  file:
+    path: "{{ redis_data_dir }}/{{ redis_port }}"
+    recurse: yes
+    state: directory
+    owner: redis
+    group: redis
+
+- name: Configure
+  template:
+    src: redis.conf.j2
+    dest: /etc/redis/{{ redis_port }}.conf
+    owner: redis
+    group: redis
+  register: configuration_status
+  notify:
+    - restart redis
+
+- name: Set facts
+  set_fact:
+    redis_notify_items: "{{ redis_notify_items|default([]) | union([dict(changed=configuration_status.changed,port=redis_port)]) }}"
+
+- name: startup for upstart
+  template:
+    src: redis.init.j2
+    dest: /etc/init.d/redis_{{ redis_port }}
+    mode: 0755
+  when: ansible_service_mgr in ['upstart','sysvinit']
+
+- name: startup for systemd
+  template:
+    src: redis.service.j2
+    dest: /lib/systemd/system/redis_{{ redis_port }}.service
+  when: ansible_service_mgr == 'systemd'
+  notify:
+    - daemon-reload
+
+# - name: Flush handlers
+#   meta: flush_handlers
+
+- name: Ensure redis instance state
+  service:
+    name: redis_{{ redis_port }}
+    enabled: true
+    state: started

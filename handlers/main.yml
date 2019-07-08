@@ -3,8 +3,19 @@
   systemd:
     daemon_reload: yes
 
-- name: restart redis
+- name: restart redis instance {{ item.port }}
   service:
     enabled: yes
-    name: redis_{{ redis_port }}
+    name: redis_{{ item.port }}
     state: restarted
+  when: item.changed
+  loop: "{{ redis_notify_items }}"
+  listen: restart redis
+
+- name: restart all redis
+  service:
+    enabled: yes
+    name: redis_{{ item.port }}
+    state: restarted
+  loop: "{{ redis_items | list }}"
+  no_log: true

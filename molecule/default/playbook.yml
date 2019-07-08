@@ -6,7 +6,11 @@
   any_errors_fatal: true
   roles:
     - role: daixijun.redis
-      redis_disabled_commands:
-        - keys
-        - flushall
-      redis_password: test
+      redis_version: 5.0.5
+      redis_items:
+        - port: 6379
+          disabled_commands:
+            - keys
+            - flushall
+          password: test
+        - port: 6380
