@@ -16,27 +16,27 @@ Role Variables
 ---
 redis_version: 5.0.5
 redis_upgrade: false
+redis_download_url: https://mirror.azure.cn/redis/releases/redis-{{ redis_version }}.tar.gz
 redis_data_dir: /var/lib/redis
-redis_items: []
-# - port: 6379
-#   bind: 127.0.0.1
-#   password: ''
-#   unixsocket: ''
-#   timeout: 300
-#   databases: 16
-#   loglevel: notice
-#   logfile: /dev/null
-#   keepalive: 60
-#   maxclients: 10000
-#   maxmemory: 500mb
-#   maxmemory_policy: volatile-lru
-#   appendonly: 'yes'
-#   appendfilename: appendonly.aof
-#   appendfsync: everysec
-#   slaveof: ''  # eg: masterip masterport
-#   master_password: ''
-#   disabled_commands: []
-
+redis_items:
+  - port: 6379
+    bind: 127.0.0.1
+    password: ''
+    unixsocket: ''
+    timeout: 300
+    databases: 16
+    loglevel: notice
+    logfile: /dev/null
+    keepalive: 60
+    maxclients: 10000
+    maxmemory: 500mb
+    maxmemory_policy: volatile-lru
+    appendonly: 'yes'
+    appendfilename: appendonly.aof
+    appendfsync: everysec
+    slaveof: ''  # eg: masterip masterport
+    master_password: ''
+    disabled_commands: []
 ```
 
 Example Playbook
@@ -48,8 +48,7 @@ Including an example of how to use your role (for instance, with variables passe
 - hosts: servers
   roles:
     - role: daixijun.redis
-      redis_items:
-        - port: 6379
+      redis_version: 5.0.5
 ```
 
 License

@@ -3,7 +3,7 @@
   systemd:
     daemon_reload: yes
 
-- name: restart redis instance {{ item.port }}
+- name: restart redis instance
   service:
     enabled: yes
     name: redis_{{ item.port }}
