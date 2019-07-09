@@ -104,8 +104,11 @@ loglevel {{ redis_loglevel }}
 # Specify the log file name. Also the empty string can be used to force
 # Redis to log on the standard output. Note that if you use standard
 # output for logging but daemonize, logs will be sent to /dev/null
+{% if redis_logfile %}
 logfile {{ redis_logfile }}
-
+{% else %}
+logfile {{ redis_log_dir }}/{{ redis_port }}.log
+{% endif %}
 # To enable logging to the system logger, just set 'syslog-enabled' to yes,
 # and optionally update the other syslog parameters to suit your needs.
 # syslog-enabled no
@@ -208,9 +211,11 @@ slaveof {{ redis_slaveof }}
 # starting the replication synchronization process, otherwise the master will
 # refuse the slave request.
 #
-{% if redis_master_password %}
+# masterauth ""
+{% if redis_master_password and redis_slaveof %}
 masterauth {{ redis_master_password }}
 {% endif %}
+
 # When a slave loses its connection with the master, or when the replication
 # is still in progress, the slave can act in two different ways:
 #

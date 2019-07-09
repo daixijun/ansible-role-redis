@@ -5,6 +5,8 @@ After=network-online.target
 Wants=network-online.target
 
 [Service]
+ExecStartPre=-echo 'never' > /sys/kernel/mm/transparent_hugepage/enabled
+ExecStartPre=-echo 'never' > /sys/kernel/mm/transparent_hugepage/defrag
 ExecStart=/usr/local/bin/redis-server /etc/redis/{{ redis_port }}.conf --supervised systemd
 ExecStop=/usr/local/libexec/redis-shutdown redis/{{ redis_port }}
 Type=notify

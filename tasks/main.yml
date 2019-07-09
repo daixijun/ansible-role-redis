@@ -15,7 +15,7 @@
     redis_timeout: "{{ item.timeout | default(0) }}"
     redis_keepalive: "{{ item.keepalive | default(60) }}"
     redis_loglevel: "{{ item.loglevel | default('warning') }}"
-    redis_logfile: "{{ item.logfile | default('/dev/null') }}"
+    redis_logfile: "{{ item.logfile | default('') }}"
     redis_databases: "{{ item.databases | default(16) }}"
     redis_slaveof: "{{ item.slaveof | default('') }}"
     redis_master_password: "{{ item.master_password | default(item.password) | default('') }}"

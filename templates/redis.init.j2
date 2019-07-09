@@ -29,6 +29,14 @@ lockfile=/var/lock/subsys/${name}
 start() {
     [ -f $REDIS_CONFIG ] || exit 6
     [ -x $exec ] || exit 5
+
+    if test -f /sys/kernel/mm/transparent_hugepage/enabled; then
+        echo 'never' > /sys/kernel/mm/transparent_hugepage/enabled
+    fi
+    if test -f /sys/kernel/mm/transparent_hugepage/defrag; then
+        echo 'never' > /sys/kernel/mm/transparent_hugepage/defrag
+    fi
+
     echo -n $"Starting $name: "
     daemon --user ${REDIS_USER-redis} "$exec $REDIS_CONFIG --daemonize yes --pidfile $pidfile"
     retval=$?

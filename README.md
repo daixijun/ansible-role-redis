@@ -18,6 +18,7 @@ redis_version: 5.0.5
 redis_upgrade: false
 redis_download_url: https://mirror.azure.cn/redis/releases/redis-{{ redis_version }}.tar.gz
 redis_data_dir: /var/lib/redis
+redis_log_dir: /var/log/redis
 redis_items:
   - port: 6379
     bind: 0.0.0.0
