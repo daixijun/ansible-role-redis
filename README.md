@@ -20,7 +20,7 @@ redis_download_url: https://mirror.azure.cn/redis/releases/redis-{{ redis_versio
 redis_data_dir: /var/lib/redis
 redis_items:
   - port: 6379
-    bind: 127.0.0.1
+    bind: 0.0.0.0
     password: ''
     unixsocket: ''
     timeout: 300
