@@ -36,11 +36,21 @@
     path: /usr/local/bin/redis-server
   register: redis_stat
 
+- name: Downlaod redis package
+  get_url:
+    url: "{{ redis_download_url }}"
+    dest: "{{ role_path }}/files/"
+  delegate_to: localhost
+  become: false
+  run_once: true
+  when:
+    - redis_upgrade or not redis_stat.stat.exists
+
 - name: Unarchive redis-{{ redis_version }}
   unarchive:
-    src: "{{ redis_download_url }}"
+    src: "files/{{ redis_download_url | basename }}"
     dest: /usr/local/src/
-    remote_src: yes
+    remote_src: false
     creates: /usr/local/src/redis-{{ redis_version }}
   when:
     - redis_upgrade or not redis_stat.stat.exists
@@ -79,12 +89,12 @@
 
 - name: Ensure redis related directory exists
   file:
-    path: '{{ item }}'
+    path: "{{ item }}"
     state: directory
     owner: redis
     group: redis
   loop:
-    - '{{ redis_data_dir }}'
+    - "{{ redis_data_dir }}"
     - /etc/redis
-    - '{{ redis_log_dir }}'
+    - "{{ redis_log_dir }}"
     - /var/run/redis
