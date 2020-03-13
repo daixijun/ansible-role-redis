@@ -5,6 +5,10 @@ language: python
 python: "3.7"
 cache: pip
 
+env:
+  - SCENARIO_NAME=default
+  - SCENARIO_NAME=sentinel
+
 services:
   - docker
 
@@ -14,11 +18,10 @@ before_script:
   - cd daixijun.redis
 
 install:
-  - pip install molecule docker
-  - pip install --upgrade testinfra
+  - pip install "molecule[lint,docker]"
 
 script:
-  - molecule test
+  - molecule test --scenario-name ${SCENARIO_NAME}
 
 notifications:
   email: false
