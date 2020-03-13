@@ -1,0 +1,15 @@
+---
+# This is an example playbook to execute Ansible tests.
+
+- name: Verify
+  hosts: all
+  tasks:
+    - name: Gather service facts
+      service_facts:
+      no_log: yes
+
+    - name: Assert that the service is in the expected state
+      assert:
+        that:
+          - ansible_facts.services["redis_6379.service"].state == "running"
+          - ansible_facts.services["redis_sentinel.service"].state == "running"

@@ -1,0 +1,21 @@
+redis_items:
+  - port: 6379
+    bind: 0.0.0.0
+    password: ""
+    unixsocket: ""
+    timeout: 300
+    databases: 16
+    loglevel: notice
+    logfile: "{{ redis_log_dir }}/6379.log"
+    keepalive: 60
+    maxclients: 10000
+    maxmemory: 500mb
+    maxmemory_policy: volatile-lru
+    appendonly: "yes"
+    appendfilename: appendonly.aof
+    appendfsync: everysec
+    slaveof: "{{ hostvars['sentinel1'].ansible_default_ipv4.address }} 6379" # eg: masterip masterport
+    master_password: ""
+    disabled_commands:
+      - keys
+      - flushall
