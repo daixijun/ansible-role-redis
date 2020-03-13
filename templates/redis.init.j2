@@ -36,6 +36,9 @@ start() {
     if test -f /sys/kernel/mm/transparent_hugepage/defrag; then
         echo 'never' > /sys/kernel/mm/transparent_hugepage/defrag
     fi
+    if test -f /proc/sys/net/core/somaxconn; then
+        echo '512' > /proc/sys/net/core/somaxconn
+    fi
 
     echo -n $"Starting $name: "
     daemon --user ${REDIS_USER-redis} "$exec $REDIS_CONFIG --daemonize yes --pidfile $pidfile"
