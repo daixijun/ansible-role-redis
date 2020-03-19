@@ -7,8 +7,8 @@ redis_log_dir: /var/log/redis
 redis_items:
   - port: 6379
     bind: 0.0.0.0
-    password: ''
-    unixsocket: ''
+    password: ""
+    unixsocket: ""
     timeout: 300
     databases: 16
     loglevel: notice
@@ -17,11 +17,23 @@ redis_items:
     maxclients: 10000
     maxmemory: 500mb
     maxmemory_policy: volatile-lru
-    appendonly: 'yes'
+    appendonly: "yes"
     appendfilename: appendonly.aof
     appendfsync: everysec
-    slaveof: ''  # eg: masterip masterport
-    master_password: ''
+    slaveof: "" # eg: masterip masterport
+    master_password: ""
     disabled_commands:
       - keys
       - flushall
+redis_sentinel: false
+redis_sentinel_port: 26379
+redis_sentinel_bind: 0.0.0.0
+redis_sentinel_vip: ""
+redis_sentinel_dir: /var/lib/redis/sentinel_{{ redis_sentinel_port }}
+redis_sentinel_password: ""
+redis_sentinel_monitors:
+  - name: master
+    master: 127.0.0.1
+    port: 6379
+    password: ""
+    quorum: 2

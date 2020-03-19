@@ -1,0 +1,70 @@
+---
+- name: Create sentinel data directory
+  file:
+    path: "{{ redis_data_dir }}/sentinel_{{ redis_sentinel_port }}"
+    recurse: yes
+    state: directory
+    owner: redis
+    group: redis
+
+- name: Create sentinel configuration
+  template:
+    src: sentinel.conf.j2
+    dest: /etc/redis/sentinel_{{ redis_sentinel_port }}.conf
+    owner: redis
+    group: redis
+  notify:
+    - restart sentinel
+
+- name: Create sentinel notify script
+  template:
+    src: sentinel_notify.sh.j2
+    dest: /etc/redis/sentinel_notify_{{ redis_sentinel_port }}.sh
+    owner: redis
+    group: redis
+    mode: "u+x,g+x"
+  notify:
+    - restart sentinel
+  when:
+    - redis_sentinel_vip|length > 0
+
+- name: Startup sentinel service for systemd
+  template:
+    src: sentinel.service.j2
+    dest: /lib/systemd/system/redis_sentinel.service
+  when: ansible_service_mgr == 'systemd'
+  notify:
+    - restart sentinel
+
+# 需要先启动sentinel服务，后续需要获取master的ip地址
+- name: Force flush handlers
+  meta: flush_handlers
+
+- name: Get replication role
+  shell: >
+    /usr/local/bin/redis-cli \
+      -h {{ ansible_default_ipv4.address }} \
+      -p {{ redis_sentinel_port }} \
+      -a {{ redis_sentinel_password | quote }} \
+      --no-auth-warning \
+      SENTINEL get-master-addr-by-name master | head -1
+  args:
+    warn: false
+  register: _master_address
+  no_log: true
+  tags:
+    - skip_ansible_lint
+  when:
+    - redis_sentinel_vip|length > 0
+
+- name: Setting VIP
+  shell: /etc/redis/sentinel_notify_{{ redis_sentinel_port }}.sh 1 2 3 4 5 {{ _master_address.stdout }}
+  args:
+    warn: false
+  when:
+    - redis_sentinel_vip|length > 0
+    - _master_address.rc|int == 0
+    - _master_address.stdout|length > 0
+  run_once: true
+  tags:
+    - skip_ansible_lint

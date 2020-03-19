@@ -31,3 +31,14 @@
     - redis_items|length > 0
   tags:
     - config
+
+- name: Gather service facts
+  service_facts:
+  no_log: yes
+
+# 由于sentinel在运行中会重写配置文件，所以没法做到幂等性
+- name: Configuration sentinel instance
+  include_tasks: sentinel.yml
+  when:
+    - redis_sentinel|bool
+    - "'redis_sentinel.service' not in ansible_facts.services or ansible_facts.services['redis_sentinel.service'].state != 'running'"

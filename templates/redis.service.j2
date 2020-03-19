@@ -1,3 +1,4 @@
+# {{ ansible_managed }}
 [Unit]
 Description=Redis persistent key-value database
 After=network.target
@@ -5,9 +6,9 @@ After=network-online.target
 Wants=network-online.target
 
 [Service]
-ExecStartPre=-echo 'never' > /sys/kernel/mm/transparent_hugepage/enabled
-ExecStartPre=-echo 'never' > /sys/kernel/mm/transparent_hugepage/defrag
-ExecStartPre=-echo '512' > /proc/sys/net/core/somaxconn
+ExecStartPre=-/usr/bin/echo 'never' > /sys/kernel/mm/transparent_hugepage/enabled
+ExecStartPre=-/usr/bin/echo 'never' > /sys/kernel/mm/transparent_hugepage/defrag
+ExecStartPre=-/usr/bin/echo '512' > /proc/sys/net/core/somaxconn
 ExecStart=/usr/local/bin/redis-server /etc/redis/{{ redis_port }}.conf --supervised systemd
 ExecStop=/usr/local/libexec/redis-shutdown redis/{{ redis_port }}
 Type=notify

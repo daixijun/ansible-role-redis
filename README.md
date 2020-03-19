@@ -61,3 +61,8 @@ Author Information
 ------------------
 
 Xijun Dai <daixijun1990@gmail.com>
+
+已知问题
+------------------
+
+* Sentinel在运行中会重写配置文件，这块没法做到幂等性
