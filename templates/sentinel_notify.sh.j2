@@ -19,12 +19,10 @@ if [[ "${MASTER_IP}" == "${LOCAL_IP}" ]]; then
     if [[ "$?" == "1" ]]; then
         /usr/sbin/ip addr add ${VIP}/${NETMASK} dev ${INTERFACE}
         /usr/sbin/arping -q -c 3 -A ${VIP} -I ${INTERFACE}
-        /usr/sbin/ip addr show ${INTERFACE}
     fi
     exit 0
 else
     /usr/sbin/ip addr del ${VIP}/${NETMASK} dev ${INTERFACE} > /dev/null 2>&1
-    /usr/sbin/ip addr show ${INTERFACE}
     exit 0
 fi
 exit 1

@@ -15,6 +15,7 @@
   until: install_dependencies_status.finished
   # delay: 5
   retries: 300
+  no_log: true
 
 - name: Create redis group
   group:
@@ -75,6 +76,7 @@
   until: compile_install_status.finished
   # delay: 5
   retries: 1000
+  no_log: true
   when:
     - compile_and_install is defined
     - compile_and_install is changed

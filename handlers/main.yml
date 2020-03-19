@@ -10,6 +10,7 @@
     state: restarted
   when: item.changed
   loop: "{{ redis_notify_items }}"
+  no_log: true
   listen: restart redis
 
 - name: restart all redis
@@ -26,3 +27,4 @@
     enabled: yes
     daemon_reload: true
     state: restarted
+  no_log: true
