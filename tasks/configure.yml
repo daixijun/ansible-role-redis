@@ -13,32 +13,14 @@
     dest: /etc/redis/{{ redis_port }}.conf
     owner: redis
     group: redis
-  register: configuration_status
   notify:
     - restart redis
 
-- name: Set redis_notify_items facts
-  set_fact:
-    redis_notify_items: "{{ redis_notify_items|default([]) | union([dict(changed=configuration_status.changed,port=redis_port)]) }}"
+# 为了删除老版本遗留下来的配置文件
+- name: Remove redis service for single instance
+  file:
+    path: /lib/systemd/system/redis_{{ redis_port }}.service
+    state: absent
 
-- name: Startup redis init script for upstart
-  template:
-    src: redis.init.j2
-    dest: /etc/init.d/redis_{{ redis_port }}
-    mode: 0755
-  when: ansible_service_mgr in ['upstart','sysvinit']
-
-- name: Startup redis service for systemd
-  template:
-    src: redis.service.j2
-    dest: /lib/systemd/system/redis_{{ redis_port }}.service
-  when: ansible_service_mgr == 'systemd'
-  notify:
-    - daemon-reload
-
-- name: Ensure redis instance state
-  service:
-    name: redis_{{ redis_port }}
-    enabled: true
-    state: started
-  no_log: true
+- name: Force flush handlers
+  meta: flush_handlers

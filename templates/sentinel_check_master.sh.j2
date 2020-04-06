@@ -1,0 +1,14 @@
+#!/bin/sh
+# {{ ansible_managed }}
+#
+SENTINEL_PORT=$1
+MASTER_NAME=$2
+MASTER_IPADDR=`/usr/local/bin/redis-cli -h 127.0.0.1 -p ${SENTINEL_PORT} sentinel get-master-addr-by-name ${MASTER_NAME} | head -1`
+LOCAL_IPADDR="{{ ansible_default_ipv4.address }}"
+EXIT_STATUS=0
+
+if [ "${MASTER_IPADDR}" != "${LOCAL_IPADDR}" ]; then
+    EXIT_STATUS=1
+fi
+
+exit $EXIT_STATUS

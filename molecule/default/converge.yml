@@ -3,21 +3,10 @@
   hosts: all
   become: yes
   tasks:
-    - name: "Include daixijun.epel"
-      include_role:
-        name: "daixijun.epel"
-      vars:
-        epel_repo_replace: true
-
     - name: Include daixijun.redis
       include_role:
         name: daixijun.redis
       vars:
-        redis_version: 5.0.5
-        redis_items:
-          - port: 6379
-            disabled_commands:
-              - keys
-              - flushall
-            password: test
-          - port: 6380
+        redis_version: 5.0.8
+        redis_port: 6379
+        redis_password: test

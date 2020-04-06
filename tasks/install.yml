@@ -1,21 +1,14 @@
 ---
 - name: Install dependencies
   yum:
-    name: jemalloc,jemalloc-devel,gcc,gcc-c++,make
+    name: jemalloc,jemalloc-devel,openssl-devel,centos-release-scl,scl-utils-build
     state: present
-  register: install_dependencies
-  async: 300
-  poll: 0
-  changed_when: False
 
-- name: Wait for dependencies install complete
-  async_status:
-    jid: "{{ install_dependencies.ansible_job_id }}"
-  register: install_dependencies_status
-  until: install_dependencies_status.finished
-  # delay: 5
-  retries: 300
-  no_log: true
+- name: Install devtoolset-8-toolchain
+  yum:
+    name: devtoolset-8-toolchain
+    update_cache: yes
+    state: present
 
 - name: Create redis group
   group:
@@ -37,10 +30,19 @@
     path: /usr/local/bin/redis-server
   register: redis_stat
 
+- name: Create files directory in playbook_dir
+  file:
+    path: "{{ playbook_dir }}/files"
+    recurse: True
+    state: directory
+  become: False
+  delegate_to: localhost
+  run_once: True
+
 - name: Downlaod redis package
   get_url:
     url: "{{ redis_download_url }}"
-    dest: "{{ role_path }}/files/"
+    dest: "{{ playbook_dir }}/files/{{ redis_download_url | basename }}"
   delegate_to: localhost
   become: false
   run_once: true
@@ -57,7 +59,7 @@
     - redis_upgrade or not redis_stat.stat.exists
 
 - name: Compile && install
-  shell: "make -j && make install"
+  shell: scl enable devtoolset-8 "make -j BUILD_TLS=yes && make install BUILD_TLS=yes"
   args:
     chdir: /usr/local/src/redis-{{ redis_version }}
     removes: /usr/local/src/redis-{{ redis_version }}
@@ -67,7 +69,7 @@
   poll: 0
   register: compile_and_install
   notify:
-    - restart all redis
+    - restart redis
 
 - name: Wait for compile/install complete
   async_status:
@@ -81,13 +83,20 @@
     - compile_and_install is defined
     - compile_and_install is changed
 
-- name: Copy redis-shutdown
+- name: Generate /usr/local/libexec/redis-shutdown
   template:
     src: redis-shutdown.sh.j2
     dest: /usr/local/libexec/redis-shutdown
     owner: redis
     group: redis
-    mode: 0644
+    mode: 0700
+
+- name: Startup redis multiple servers for systemd
+  template:
+    src: redis.service.j2
+    dest: /usr/lib/systemd/system/redis@.service
+  notify:
+    - restart redis
 
 - name: Ensure redis related directory exists
   file:
@@ -97,6 +106,6 @@
     group: redis
   loop:
     - "{{ redis_data_dir }}"
-    - /etc/redis
+    - /etc/redis/ssl/{{ redis_port }}
     - "{{ redis_log_dir }}"
-    - /var/run/redis
+    # - /var/run/redis

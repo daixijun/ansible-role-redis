@@ -19,6 +19,7 @@ HOST=`awk '/^[[:blank:]]*bind/ { print $2 }' $CONFIG_FILE | tail -n1`
 PORT=`awk '/^[[:blank:]]*port/ { print $2 }' $CONFIG_FILE | tail -n1`
 PASS=`awk '/^[[:blank:]]*requirepass/ { print $2 }' $CONFIG_FILE | tail -n1`
 SOCK=`awk '/^[[:blank:]]*unixsocket\s/ { print $2 }' $CONFIG_FILE | tail -n1`
+TLSPORT=`awk '/^[[:blank:]]*tls-port/ { print $2 }' $CONFIG_FILE | tail -n1`
 
 # Just in case, use default host, port
 HOST=${HOST:-127.0.0.1}
@@ -31,10 +32,14 @@ fi
 # Setup additional parameters
 # e.g password-protected redis instances
 [ -z "$PASS"  ] || ADDITIONAL_PARAMS="-a $PASS"
+if [ -n "$TLSPORT" ]; then
+    PORT=$TLSPORT
+    ADDITIONAL_PARAMS="$ADDITIONAL_PARAMS --tls --cacert /etc/redis/ssl/$PORT/ca.crt --cert /etc/redis/ssl/$PORT/redis.crt --key /etc/redis/ssl/$PORT/redis.key"
+fi
 
 # shutdown the service properly
 if [ -e "$SOCK" ] ; then
-        $REDIS_CLI -s $SOCK $ADDITIONAL_PARAMS shutdown
+    $REDIS_CLI -s $SOCK $ADDITIONAL_PARAMS shutdown
 else
-        $REDIS_CLI -h $HOST -p $PORT $ADDITIONAL_PARAMS shutdown
+    $REDIS_CLI -h $HOST -p $PORT $ADDITIONAL_PARAMS shutdown
 fi

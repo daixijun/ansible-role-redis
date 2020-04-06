@@ -1,14 +1,14 @@
 # {{ ansible_managed }}
 daemonize yes
 port {{ redis_sentinel_port }}
-dir {{ redis_sentinel_dir }}
+dir {{ redis_data_dir }}/sentinel_{{ redis_sentinel_port }}
 bind {{ redis_sentinel_bind }}
 logfile {{ redis_log_dir }}/sentinel_{{ redis_sentinel_port }}.log
 pidfile  /var/run/sentinel_{{ redis_sentinel_port }}.pid
 {% if redis_sentinel_password %}
 requirepass {{ redis_sentinel_password }}
 {% endif %}
-protected-mode no
+protected-mode yes
 
 {% if redis_sentinel_monitors|length > 0 %}
 {% for item in redis_sentinel_monitors %}
@@ -19,13 +19,5 @@ sentinel auth-pass {{ item.name }} {{ item.password }}
 sentinel down-after-milliseconds {{ item.name }} {{ item.down_after_milliseconds | default(5000) }}
 sentinel parallel-syncs {{ item.name }} {{ item.parallel_syncs | default(1) }}
 sentinel failover-timeout {{ item.name }} {{ failover_timeout | default(180000) }}
-{% if redis_sentinel_vip  %}
-# sentinel notification-script {{ item.name }} /etc/redis/sentinel_notify_{{ redis_sentinel_port }}.sh
-sentinel client-reconfig-script {{ item.name }} /etc/redis/sentinel_notify_{{ redis_sentinel_port }}.sh
-{% endif %}
-
-# 这个脚本应该是通用的，能被多次调用，不是针对性的。
-# sentinel client-reconfig-script <master-name> <script-path>
-# sentinel client-reconfig-script {{ item.name }} /var/redis/reconfig.sh
 {% endfor %}
 {% endif %}

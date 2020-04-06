@@ -1,44 +1,30 @@
 ---
+- name: Prepare checks
+  import_tasks: prepare.yml
+  tags:
+    - prepare
+    - check
+
 - name: Install Redis
-  include_tasks: install.yml
+  import_tasks: install.yml
   tags:
     - install
 
-- name: Configuration redis instance
-  include_tasks: configure.yml
-  vars:
-    redis_port: "{{ item.port | default(6379) }}"
-    redis_disabled_commands: "{{ item.disabled_commands | default([]) }}"
-    redis_password: "{{ item.password | default('') }}"
-    redis_bind: "{{ item.bind | default('127.0.0.1') }}"
-    redis_unixsocket: "{{ item.unixsocket | default('') }}"
-    redis_timeout: "{{ item.timeout | default(0) }}"
-    redis_keepalive: "{{ item.keepalive | default(60) }}"
-    redis_loglevel: "{{ item.loglevel | default('warning') }}"
-    redis_logfile: "{{ item.logfile | default('') }}"
-    redis_databases: "{{ item.databases | default(16) }}"
-    redis_slaveof: "{{ item.slaveof | default('') }}"
-    redis_master_password: "{{ item.master_password | default(item.password) | default('') }}"
-    redis_maxclients: "{{ item.maxclients | default(1000) }}"
-    redis_maxmemory: "{{ item.maxmemory | default('500mb') }}"
-    redis_maxmemory_policy: "{{ item.maxmemory_policy | default('volatile-lru') }}"
-    redis_appendonly: "{{ item.appendonly | default('yes') }}"
-    redis_appendfilename: "{{ item.appendfilename | default('appendonly.aof') }}"
-    redis_appendfsync: "{{ item.appendfsync | default('everysec') }}"
-  loop: "{{ redis_items }}"
-  no_log: true
+- name: Generate ssl Certificate
+  include_tasks: tls.yml
   when:
-    - redis_items|length > 0
+    - redis_ssl_enable|bool
+  tags:
+    - install
+    - tls
+
+- name: Configuration redis instance
+  import_tasks: configure.yml
   tags:
     - config
-
-- name: Gather service facts
-  service_facts:
-  no_log: yes
 
 # 由于sentinel在运行中会重写配置文件，所以没法做到幂等性
 - name: Configuration sentinel instance
   include_tasks: sentinel.yml
   when:
     - redis_sentinel|bool
-    - "'redis_sentinel.service' not in ansible_facts.services or ansible_facts.services['redis_sentinel.service'].state != 'running'"

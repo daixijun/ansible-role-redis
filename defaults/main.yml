@@ -4,32 +4,34 @@ redis_upgrade: false
 redis_download_url: https://mirror.azure.cn/redis/releases/redis-{{ redis_version }}.tar.gz
 redis_data_dir: /var/lib/redis
 redis_log_dir: /var/log/redis
-redis_items:
-  - port: 6379
-    bind: 0.0.0.0
-    password: ""
-    unixsocket: ""
-    timeout: 300
-    databases: 16
-    loglevel: notice
-    logfile: "{{ redis_log_dir }}/6379.log"
-    keepalive: 60
-    maxclients: 10000
-    maxmemory: 500mb
-    maxmemory_policy: volatile-lru
-    appendonly: "yes"
-    appendfilename: appendonly.aof
-    appendfsync: everysec
-    slaveof: "" # eg: masterip masterport
-    master_password: ""
-    disabled_commands:
-      - keys
-      - flushall
+redis_port: 6379
+redis_bind: 0.0.0.0 # 如果开启ssl，则强制设置为127.0.0.1
+redis_password: ""
+redis_unixsocket: ""
+redis_timeout: 0
+redis_databases: 16
+redis_loglevel: notice
+redis_keepalive: 60
+redis_maxclients: 10000
+redis_maxmemory: 500mb
+redis_maxmemory_policy: volatile-lru
+redis_appendonly: "yes"
+redis_appendfilename: appendonly.aof
+redis_appendfsync: everysec
+redis_replicaof: "" # eg: masterip masterport
+redis_master_password: ""
+redis_master_username: "" # for redis 6.0
+redis_disabled_commands: []
+# - keys
+# - flushall
+redis_ssl_enable: false
+redis_ssl_ca: ""
+redis_ssl_cert: ""
+redis_ssl_key: ""
+
 redis_sentinel: false
 redis_sentinel_port: 26379
 redis_sentinel_bind: 0.0.0.0
-redis_sentinel_vip: ""
-redis_sentinel_dir: /var/lib/redis/sentinel_{{ redis_sentinel_port }}
 redis_sentinel_password: ""
 redis_sentinel_monitors:
   - name: master

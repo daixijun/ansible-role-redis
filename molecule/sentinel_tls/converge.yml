@@ -6,6 +6,11 @@
       include_role:
         name: "daixijun.redis"
       vars:
+        redis_version: 6.0-rc3
+        redis_ssl_enable: true
+        redis_ssl_ca: ssl/{{ redis_port }}/ca.crt
+        redis_ssl_cert: ssl/{{ redis_port }}/server.crt
+        redis_ssl_key: ssl/{{ redis_port }}/server.key
         redis_sentinel: true
         redis_sentinel_vip: "172.17.0.10"
         redis_sentinel_monitors:

@@ -1,15 +1,13 @@
 ---
-# This is an example playbook to execute Ansible tests.
-
 - name: Verify
   hosts: all
   tasks:
-    - name: Gather service facts
-      service_facts:
-      no_log: yes
+    - name: Watting for HA VIP state is listening
+      wait_for:
+        host: 172.17.0.10
+        port: 6379
+        state: started
+        timeout: 10
 
-    - name: Assert that the service is in the expected state
-      assert:
-        that:
-          - ansible_facts.services["redis_6379.service"].state == "running"
-          - ansible_facts.services["redis_sentinel.service"].state == "running"
+    - name: Redis ping
+      command: /usr/local/bin/redis-cli -h 172.17.0.10 -p 6379 ping

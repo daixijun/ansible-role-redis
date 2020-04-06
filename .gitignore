@@ -1,4 +1,9 @@
 .pyc
 __pycache__/
 *.log
-files/redis*.tar.gz
+*.tar.gz
+*.pem
+*.key
+*.crt
+*.csr
+templates/sentinel_notify.sh.j2

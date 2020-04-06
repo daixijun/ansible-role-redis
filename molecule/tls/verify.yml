@@ -2,7 +2,7 @@
 - name: Verify
   hosts: all
   tasks:
-    - name: Check redis instance port state is listening
+    - name: Check redis instance port 3306 state is listening
       wait_for:
         host: 0.0.0.0
         port: 6379
@@ -10,7 +10,14 @@
         timeout: 10
 
     - name: Try to connect to the redis instance
-      command: /usr/local/bin/redis-cli -a test info replication
+      command: >-
+        /usr/local/bin/redis-cli \
+          -a test \
+          --tls \
+          --cacert /etc/redis/ssl/6379/ca.crt \
+          --cert /etc/redis/ssl/6379/redis.crt \
+          --key /etc/redis/ssl/6379/redis.key \
+          info replication
       register: replstatus
       no_log: True
 

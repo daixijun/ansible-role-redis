@@ -1,11 +1,15 @@
 ---
 - name: Create sentinel data directory
   file:
-    path: "{{ redis_data_dir }}/sentinel_{{ redis_sentinel_port }}"
+    path: "{{ redis_data_dir }}/sentinel_{{ redis_sentinel_port }}/"
     recurse: yes
     state: directory
     owner: redis
     group: redis
+
+- name: Gather services facts
+  service_facts:
+  no_log: yes
 
 - name: Create sentinel configuration
   template:
@@ -15,56 +19,25 @@
     group: redis
   notify:
     - restart sentinel
+  vars:
+    service_name: "sentinel@{{ redis_sentinel_port }}.service"
+  when:
+    - "service_name not in ansible_facts.services or ansible_facts.services[service_name].state != 'running'"
 
-- name: Create sentinel notify script
+- name: Create sentinel check master script
   template:
-    src: sentinel_notify.sh.j2
-    dest: /etc/redis/sentinel_notify_{{ redis_sentinel_port }}.sh
+    src: sentinel_check_master.sh.j2
+    dest: /etc/redis/sentinel_check_master.sh
     owner: redis
     group: redis
-    mode: "u+x,g+x"
-  notify:
-    - restart sentinel
-  when:
-    - redis_sentinel_vip|length > 0
+    mode: 0644
 
 - name: Startup sentinel service for systemd
   template:
     src: sentinel.service.j2
-    dest: /lib/systemd/system/redis_sentinel.service
-  when: ansible_service_mgr == 'systemd'
+    dest: /lib/systemd/system/sentinel@.service
   notify:
     - restart sentinel
 
-# 需要先启动sentinel服务，后续需要获取master的ip地址
 - name: Force flush handlers
   meta: flush_handlers
-
-- name: Get replication role
-  shell: >
-    /usr/local/bin/redis-cli \
-      -h {{ ansible_default_ipv4.address }} \
-      -p {{ redis_sentinel_port }} \
-      -a {{ redis_sentinel_password | quote }} \
-      --no-auth-warning \
-      SENTINEL get-master-addr-by-name master | head -1
-  args:
-    warn: false
-  register: _master_address
-  no_log: true
-  tags:
-    - skip_ansible_lint
-  when:
-    - redis_sentinel_vip|length > 0
-
-- name: Setting VIP
-  shell: /etc/redis/sentinel_notify_{{ redis_sentinel_port }}.sh 1 2 3 4 5 {{ _master_address.stdout }}
-  args:
-    warn: false
-  when:
-    - redis_sentinel_vip|length > 0
-    - _master_address.rc|int == 0
-    - _master_address.stdout|length > 0
-  run_once: true
-  tags:
-    - skip_ansible_lint

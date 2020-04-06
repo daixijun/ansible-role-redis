@@ -1,0 +1,113 @@
+---
+- name: Install PyOpenSSL
+  pip:
+    name: pyOpenSSL
+    state: present
+  delegate_to: localhost
+  become: false
+  run_once: true
+
+- name: Create redis certificate directory
+  file:
+    path: "{{ playbook_dir }}/files/ssl/{{ redis_port }}/"
+    recurse: yes
+    state: directory
+  delegate_to: localhost
+  become: false
+  run_once: true
+
+- name: Generate an Self Signed OpenSSL CA private key
+  openssl_privatekey:
+    path: "{{ playbook_dir }}/files/ssl/{{ redis_port }}/ca.key"
+    type: RSA
+    size: 4096
+  delegate_to: localhost
+  become: false
+  run_once: true
+
+- name: Generate an Self Signed OpenSSL CA Certificate Signing Request
+  openssl_csr:
+    path: "{{ playbook_dir }}/files/ssl/{{ redis_port }}/ca.csr"
+    privatekey_path: "{{ playbook_dir }}/files/ssl/{{ redis_port }}/ca.key"
+    organization_name: Redis
+    common_name: Certificate Authority
+  delegate_to: localhost
+  become: false
+  run_once: true
+
+- name: Generate a Self Signed OpenSSL CA certificate
+  openssl_certificate:
+    path: "{{ playbook_dir }}/files/ssl/{{ redis_port }}/ca.crt"
+    privatekey_path: "{{ playbook_dir }}/files/ssl/{{ redis_port }}/ca.key"
+    csr_path: "{{ playbook_dir }}/files/ssl/{{ redis_port }}/ca.csr"
+    selfsigned_not_after: "+3650d"
+    provider: selfsigned
+  delegate_to: localhost
+  become: false
+  run_once: true
+
+- name: Generate an Self Signed OpenSSL Server private key
+  openssl_privatekey:
+    path: "{{ playbook_dir }}/files/ssl/{{ redis_port }}/server.key"
+    type: RSA
+    size: 4096
+  delegate_to: localhost
+  become: false
+  run_once: true
+
+- name: Generate an Self Signed OpenSSL Server Certificate Signing Request
+  openssl_csr:
+    path: "{{ playbook_dir }}/files/ssl/{{ redis_port }}/server.csr"
+    privatekey_path: "{{ playbook_dir }}/files/ssl/{{ redis_port }}/server.key"
+    organization_name: Redis
+    common_name: Server
+  delegate_to: localhost
+  become: false
+  run_once: true
+
+- name: Generate a Self Signed OpenSSL Server certificate
+  openssl_certificate:
+    path: "{{ playbook_dir }}/files/ssl/{{ redis_port }}/server.crt"
+    ownca_path: "{{ playbook_dir }}/files/ssl/{{ redis_port }}/ca.crt"
+    ownca_privatekey_path: "{{ playbook_dir }}/files/ssl/{{ redis_port }}/ca.key"
+    csr_path: "{{ playbook_dir }}/files/ssl/{{ redis_port }}/server.csr"
+    selfsigned_not_after: "+3650d"
+    provider: ownca
+  delegate_to: localhost
+  become: false
+  run_once: true
+#
+# - name: Generate DH Parameters (4096 bits)
+#   openssl_dhparam:
+#     path: "{{ playbook_dir }}/files/ssl/{{ redis_port }}/dh.pem"
+#     size: 4096
+#   delegate_to: localhost
+#   become: false
+#   run_once: true
+
+- name: Copy CA Certificate
+  copy:
+    src: "{{ redis_ssl_ca }}"
+    dest: /etc/redis/ssl/{{ redis_port }}/ca.crt
+    owner: redis
+    group: redis
+  notify:
+    - restart redis
+
+- name: Copy Server Certificate
+  copy:
+    src: "{{ redis_ssl_cert }}"
+    dest: /etc/redis/ssl/{{ redis_port }}/redis.crt
+    owner: redis
+    group: redis
+  notify:
+    - restart redis
+
+- name: Copy Server private key
+  copy:
+    src: "{{ redis_ssl_key }}"
+    dest: /etc/redis/ssl/{{ redis_port }}/redis.key
+    owner: redis
+    group: redis
+  notify:
+    - restart redis

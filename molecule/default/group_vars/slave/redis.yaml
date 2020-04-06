@@ -1,0 +1,2 @@
+redis_master_password: test
+redis_replicaof: "{{ hostvars['redis1'].ansible_default_ipv4.address }} 6379"

@@ -1,56 +1,35 @@
-Redis
+daixijun.redis
 =========
 
-Ansible redis role
+[![Build Status](https://github.com/daixijun/ansible-role-redis/workflows/build/badge.svg)](https://github.com/daixijun/ansible-role-redis/actions)
+[![Ansible Galaxy](https://img.shields.io/badge/galaxy-daixijun.redis-660198.svg?style=flat)](https://galaxy.ansible.com/daixijun/redis/)
+[![GitHub tag (latest SemVer)](https://img.shields.io/github/v/tag/daixijun/ansible-role-redis?sort=semver)](https://github.com/daixijun/ansible-role-redis/tags)
+
+配置Redis环境
+
+* [x] 主从集群
+* [x] 哨兵(Sentinel)集群
+* [ ] Redis Cluster
+* [x] Redis 6.0 以上版本支持TLS加密
 
 Requirements
 --------------
 
-* Centos/RHEL 6+
-* Ansible 2.5+
+* Centos/RHEL 7+
+* Ansible 2.9+
 
 Role Variables
 --------------
 
-```yaml
----
-redis_version: 5.0.5
-redis_upgrade: false
-redis_download_url: https://mirror.azure.cn/redis/releases/redis-{{ redis_version }}.tar.gz
-redis_data_dir: /var/lib/redis
-redis_log_dir: /var/log/redis
-redis_items:
-  - port: 6379
-    bind: 0.0.0.0
-    password: ''
-    unixsocket: ''
-    timeout: 300
-    databases: 16
-    loglevel: notice
-    logfile: /dev/null
-    keepalive: 60
-    maxclients: 10000
-    maxmemory: 500mb
-    maxmemory_policy: volatile-lru
-    appendonly: 'yes'
-    appendfilename: appendonly.aof
-    appendfsync: everysec
-    slaveof: ''  # eg: masterip masterport
-    master_password: ''
-    disabled_commands: []
-```
+[defaults/main.yaml](./defaults/main.yml)
 
 Example Playbook
 ----------------
 
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
-
-```yaml
-- hosts: servers
-  roles:
-    - role: daixijun.redis
-      redis_version: 5.0.5
-```
+* 主从集群配置 [converge.yml](./molecule/default/converge.yml)
+* 哨兵集群配置 [converge.yml](./molecule/sentinel/converge.yml)
+* 主从集群开启TLS [converge.yml](./molecule/tls/converge.yml)
+* 哨兵模式下主从开启TLS [converge.yml](./molecule/sentinel_tls/converge.yml)
 
 License
 -------
