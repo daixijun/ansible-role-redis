@@ -7,7 +7,6 @@
         name: "daixijun.redis"
       vars:
         redis_sentinel: true
-        redis_sentinel_vip: "172.17.0.10"
         redis_sentinel_monitors:
           - name: master
             master: "{{ hostvars['sentinel1'].ansible_default_ipv4.address }}"
@@ -34,4 +33,4 @@
               type: PASS
               pass: 1111
             virtual_ipaddress:
-              - 172.17.0.10/24
+              - 172.17.0.150/16

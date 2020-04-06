@@ -4,7 +4,7 @@
   tasks:
     - name: Watting for HA VIP state is listening
       wait_for:
-        host: 172.17.0.10
+        host: 172.17.0.100
         port: 6379
         state: started
         timeout: 10
@@ -16,6 +16,6 @@
           --cacert /etc/redis/ssl/6379/ca.crt \
           --cert /etc/redis/ssl/6379/redis.crt \
           --key /etc/redis/ssl/6379/redis.key \
-          -h 172.17.0.10 \
+          -h 172.17.0.100 \
           -p 6379 \
           ping
