@@ -17,6 +17,10 @@
             master: "{{ hostvars['sentinel1'].ansible_default_ipv4.address }}"
             port: 6379
             password: ""
+            master_ssl_enable: true
+            master_ssl_ca: ssl/{{ redis_port }}/ca.crt
+            master_ssl_cert: ssl/{{ redis_port }}/server.crt
+            master_ssl_key: ssl/{{ redis_port }}/server.key
 
     - name: "Include daixijun.keepalived"
       include_role:

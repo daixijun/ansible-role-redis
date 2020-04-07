@@ -29,7 +29,7 @@ Example Playbook
 * 主从集群配置 [converge.yml](./molecule/default/converge.yml)
 * 哨兵集群配置 [converge.yml](./molecule/sentinel/converge.yml)
 * 主从集群开启TLS [converge.yml](./molecule/tls/converge.yml)
-* 哨兵模式下主从开启TLS [converge.yml](./molecule/sentinel_tls/converge.yml)
+* (未能正常切换master)哨兵模式下主从开启TLS [converge.yml](./molecule/sentinel_tls/converge.yml)
 
 License
 -------
@@ -45,3 +45,4 @@ Xijun Dai <daixijun1990@gmail.com>
 ------------------
 
 * Sentinel在运行中会重写配置文件，这块没法做到幂等性
+* Redis主从开启TLS后，Sentinel不会自动切换master

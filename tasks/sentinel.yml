@@ -21,9 +21,9 @@
     - restart sentinel
   vars:
     service_name: "sentinel@{{ redis_sentinel_port }}.service"
-  when:
-    - "service_name not in ansible_facts.services or ansible_facts.services[service_name].state != 'running'"
 
+  # when:
+  #   - "service_name not in ansible_facts.services or ansible_facts.services[service_name].state != 'running'"
 - name: Create sentinel check master script
   template:
     src: sentinel_check_master.sh.j2

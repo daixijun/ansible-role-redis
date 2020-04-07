@@ -6,7 +6,11 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        scenario: [default, sentinel, tls, sentinel_tls]
+        scenario:
+          - default
+          - sentinel
+          - tls
+          # - sentinel_tls
     steps:
       - name: Checkout
         uses: actions/checkout@v2

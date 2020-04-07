@@ -6,4 +6,5 @@ __pycache__/
 *.key
 *.crt
 *.csr
+*.dh
 templates/sentinel_notify.sh.j2
