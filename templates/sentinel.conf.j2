@@ -16,9 +16,9 @@ sentinel monitor {{ item.name }} {{ item.master }} {{ item.port | default(6379)}
 {% if item.password %}
 sentinel auth-pass {{ item.name }} {{ item.password }}
 {% endif %}
-sentinel down-after-milliseconds {{ item.name }} {{ item.down_after_milliseconds | default(5000) }}
+sentinel down-after-milliseconds {{ item.name }} {{ item.down_after_milliseconds | default(1000) }}
 sentinel parallel-syncs {{ item.name }} {{ item.parallel_syncs | default(1) }}
-sentinel failover-timeout {{ item.name }} {{ failover_timeout | default(180000) }}
+sentinel failover-timeout {{ item.name }} {{ item.failover_timeout | default(18000) }}
 {% if item.master_ssl_enable | default(False) %}
 tls-replication yes
 tls-ca-cert-file /etc/redis/ssl/{{ item.port }}/ca.crt
