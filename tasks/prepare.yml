@@ -19,7 +19,7 @@
     state: present
   loop:
     - name: net.core.somaxconn
-      value: 512
+      value: 32768
     - name: vm.overcommit_memory
       value: 1
 
