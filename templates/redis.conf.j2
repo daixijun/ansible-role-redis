@@ -159,6 +159,9 @@ tls-key-file /etc/redis/ssl/{{ redis_port }}/redis.key
 # Configure a DH parameters file to enable Diffie-Hellman (DH) key exchange:
 #
 # tls-dh-params-file redis.dh
+{% if redis_ssl_dh|length > 0 %}
+tls-dh-params-file /etc/redis/ssl/{{ redis_port }}/redis.dh
+{% endif %}
 
 # Configure a CA certificate(s) bundle or directory to authenticate TLS/SSL
 # clients and peers.  Redis requires an explicit configuration of at least one
@@ -175,7 +178,7 @@ tls-ca-cert-file /etc/redis/ssl/{{ redis_port }}/ca.crt
 #
 # It is possible to disable authentication using this directive.
 #
-tls-auth-clients no
+tls-auth-clients yes
 
 # By default, a Redis replica does not attempt to establish a TLS connection
 # with its master.
@@ -187,7 +190,7 @@ tls-replication yes
 # By default, the Redis Cluster bus uses a plain TCP connection. To enable
 # TLS for the bus protocol, use the following directive:
 #
-# tls-cluster yes
+tls-cluster yes
 
 # Explicitly specify TLS versions to support. Allowed values are case insensitive
 # and include "TLSv1", "TLSv1.1", "TLSv1.2", "TLSv1.3" (OpenSSL >= 1.1.1)

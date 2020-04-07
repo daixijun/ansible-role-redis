@@ -28,14 +28,19 @@ redis_ssl_enable: false
 redis_ssl_ca: ""
 redis_ssl_cert: ""
 redis_ssl_key: ""
+redis_ssl_dh: ""
 
 redis_sentinel: false
 redis_sentinel_port: 26379
 redis_sentinel_bind: 0.0.0.0
 redis_sentinel_password: ""
-redis_sentinel_monitors:
-  - name: master
-    master: 127.0.0.1
-    port: 6379
-    password: ""
-    quorum: 2
+redis_sentinel_monitors: []
+# - name: master
+#   master: 127.0.0.1
+#   port: 6379
+#   password: ""
+#   quorum: 2
+#   master_ssl_enable: false
+#   master_ssl_ca: ""
+#   master_ssl_cert: ""
+#   master_ssl_key: ""

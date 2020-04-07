@@ -76,14 +76,16 @@
   delegate_to: localhost
   become: false
   run_once: true
-#
-# - name: Generate DH Parameters (4096 bits)
-#   openssl_dhparam:
-#     path: "{{ playbook_dir }}/files/ssl/{{ redis_port }}/dh.pem"
-#     size: 4096
-#   delegate_to: localhost
-#   become: false
-#   run_once: true
+
+- name: Generate Diffie-Hellman (DH) Parameters (4096 bits)
+  openssl_dhparam:
+    path: "{{ playbook_dir }}/files/ssl/{{ redis_port }}/redis.dh"
+    size: 4096
+  delegate_to: localhost
+  become: false
+  run_once: true
+  when:
+    - redis_ssl_dh|length > 0
 
 - name: Copy CA Certificate
   copy:
@@ -111,3 +113,14 @@
     group: redis
   notify:
     - restart redis
+
+- name: Copy Diffie-Hellman (DH) Parameters
+  copy:
+    src: "{{ redis_ssl_dh }}"
+    dest: /etc/redis/ssl/{{ redis_port }}/redis.dh
+    owner: redis
+    group: redis
+  notify:
+    - restart redis
+  when:
+    - redis_ssl_dh|length > 0

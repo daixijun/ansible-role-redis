@@ -12,3 +12,4 @@
         redis_ssl_ca: ssl/{{ redis_port }}/ca.crt
         redis_ssl_cert: ssl/{{ redis_port }}/server.crt
         redis_ssl_key: ssl/{{ redis_port }}/server.key
+        redis_ssl_dh: ssl/{{ redis_port }}/redis.dh
