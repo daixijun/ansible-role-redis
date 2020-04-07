@@ -40,6 +40,9 @@ redis_sentinel_monitors: []
 #   port: 6379
 #   password: ""
 #   quorum: 2
+#   down_after_milliseconds: 1000
+#   parallel_syncs: 1
+#   failover_timeout: 18000
 #   master_ssl_enable: false
 #   master_ssl_ca: ""
 #   master_ssl_cert: ""
