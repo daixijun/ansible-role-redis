@@ -13,7 +13,7 @@
 - name: Generate ssl Certificate
   include_tasks: tls.yml
   when:
-    - redis_ssl_enable|bool
+    - redis_ssl|bool
   tags:
     - install
     - tls
@@ -23,8 +23,9 @@
   tags:
     - config
 
-# 由于sentinel在运行中会重写配置文件，所以没法做到幂等性
 - name: Configuration sentinel instance
   include_tasks: sentinel.yml
   when:
     - redis_sentinel|bool
+  tags:
+    - molecule-idempotence-notest

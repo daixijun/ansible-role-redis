@@ -8,7 +8,7 @@
       vars:
         redis_version: 6.0-rc3
         redis_port: 6379
-        redis_ssl_enable: true
+        redis_ssl: true
         redis_ssl_ca: ssl/{{ redis_port }}/ca.crt
         redis_ssl_cert: ssl/{{ redis_port }}/server.crt
         redis_ssl_key: ssl/{{ redis_port }}/server.key

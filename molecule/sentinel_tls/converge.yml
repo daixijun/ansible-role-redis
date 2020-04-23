@@ -7,20 +7,19 @@
         name: "daixijun.redis"
       vars:
         redis_version: 6.0-rc3
-        redis_ssl_enable: true
+        redis_ssl: true
         redis_ssl_ca: ssl/{{ redis_port }}/ca.crt
         redis_ssl_cert: ssl/{{ redis_port }}/server.crt
         redis_ssl_key: ssl/{{ redis_port }}/server.key
         redis_sentinel: true
-        redis_sentinel_monitors:
-          - name: master
-            master: "{{ hostvars['sentinel1'].ansible_default_ipv4.address }}"
-            port: 6379
-            password: ""
-            master_ssl_enable: true
-            master_ssl_ca: ssl/{{ redis_port }}/ca.crt
-            master_ssl_cert: ssl/{{ redis_port }}/server.crt
-            master_ssl_key: ssl/{{ redis_port }}/server.key
+        redis_sentinel_monitor_name: master
+        redis_sentinel_monitor_master: "{{ hostvars['sentinel1'].ansible_default_ipv4.address }}"
+        redis_sentinel_monitor_port: 6379
+        redis_sentinel_monitor_password: ""
+        redis_sentinel_monitor_master_ssl: true
+        redis_sentinel_monitor_master_ssl_ca: ssl/{{ redis_port }}/ca.crt
+        redis_sentinel_monitor_master_ssl_cert: ssl/{{ redis_port }}/server.crt
+        redis_sentinel_monitor_master_ssl_key: ssl/{{ redis_port }}/server.key
 
     - name: "Include daixijun.keepalived"
       include_role:

@@ -7,10 +7,6 @@
     owner: redis
     group: redis
 
-- name: Gather services facts
-  service_facts:
-  no_log: yes
-
 - name: Create sentinel configuration
   template:
     src: sentinel.conf.j2
@@ -19,10 +15,6 @@
     group: redis
   notify:
     - restart sentinel
-  vars:
-    service_name: "sentinel@{{ redis_sentinel_port }}.service"
-  when:
-    - "service_name not in ansible_facts.services or ansible_facts.services[service_name].state != 'running'"
 
 - name: Create sentinel check master script
   template:

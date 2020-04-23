@@ -7,11 +7,10 @@
         name: "daixijun.redis"
       vars:
         redis_sentinel: true
-        redis_sentinel_monitors:
-          - name: master
-            master: "{{ hostvars['sentinel1'].ansible_default_ipv4.address }}"
-            port: 6379
-            password: ""
+        redis_sentinel_monitor_name: master
+        redis_sentinel_monitor_master: "{{ hostvars['sentinel1'].ansible_default_ipv4.address }}"
+        redis_sentinel_monitor_port: 6379
+        redis_sentinel_monitor_password: ""
 
     - name: "Include daixijun.keepalived"
       include_role:

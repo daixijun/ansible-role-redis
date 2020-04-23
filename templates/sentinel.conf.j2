@@ -10,20 +10,16 @@ requirepass {{ redis_sentinel_password }}
 {% endif %}
 protected-mode yes
 
-{% if redis_sentinel_monitors|length > 0 %}
-{% for item in redis_sentinel_monitors %}
-sentinel monitor {{ item.name }} {{ item.master }} {{ item.port | default(6379)}} {{ item.quorum | default(2) }}
-{% if item.password %}
-sentinel auth-pass {{ item.name }} {{ item.password }}
+sentinel monitor {{ redis_sentinel_monitor_name }} {{ redis_sentinel_monitor_master }} {{ redis_sentinel_monitor_port|default(6379)}} {{ redis_sentinel_monitor_quorum|default(2) }}
+{% if redis_sentinel_monitor_password %}
+sentinel auth-pass {{ redis_sentinel_monitor_name }} {{ redis_sentinel_monitor_password }}
 {% endif %}
-sentinel down-after-milliseconds {{ item.name }} {{ item.down_after_milliseconds | default(1000) }}
-sentinel parallel-syncs {{ item.name }} {{ item.parallel_syncs | default(1) }}
-sentinel failover-timeout {{ item.name }} {{ item.failover_timeout | default(18000) }}
-{% if item.master_ssl_enable | default(False) %}
+sentinel down-after-milliseconds {{ redis_sentinel_monitor_name }} {{ redis_sentinel_monitor_down_after_milliseconds|default(1000) }}
+sentinel parallel-syncs {{ redis_sentinel_monitor_name }} {{ redis_sentinel_monitor_parallel_syncs|default(1) }}
+sentinel failover-timeout {{ redis_sentinel_monitor_name }} {{ redis_sentinel_monitor_failover_timeout|default(18000) }}
+{% if redis_sentinel_monitor_master_ssl|default(False) %}
 tls-replication yes
-tls-ca-cert-file /etc/redis/ssl/{{ item.port }}/ca.crt
-tls-cert-file    /etc/redis/ssl/{{ item.port }}/redis.crt
-tls-key-file     /etc/redis/ssl/{{ item.port }}/redis.key
-{% endif %}
-{% endfor %}
+tls-ca-cert-file /etc/redis/ssl/{{ redis_sentinel_monitor_port }}/ca.crt
+tls-cert-file    /etc/redis/ssl/{{ redis_sentinel_monitor_port }}/redis.crt
+tls-key-file     /etc/redis/ssl/{{ redis_sentinel_monitor_port }}/redis.key
 {% endif %}

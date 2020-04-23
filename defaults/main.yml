@@ -4,8 +4,11 @@ redis_upgrade: false
 redis_download_url: https://mirror.azure.cn/redis/releases/redis-{{ redis_version }}.tar.gz
 redis_data_dir: /var/lib/redis
 redis_log_dir: /var/log/redis
+
+## 数据节点配置
+redis_data_node: True # 是否开启数据节点
 redis_port: 6379
-redis_bind: 0.0.0.0 # 如果开启ssl，则强制设置为127.0.0.1
+redis_bind: 0.0.0.0
 redis_password: ""
 redis_unixsocket: ""
 redis_timeout: 0
@@ -24,26 +27,26 @@ redis_master_username: "" # for redis 6.0
 redis_disabled_commands: []
 # - keys
 # - flushall
-redis_ssl_enable: false
+redis_ssl: false
 redis_ssl_ca: ""
 redis_ssl_cert: ""
 redis_ssl_key: ""
 redis_ssl_dh: ""
 
+## Sentinel 哨兵配置
 redis_sentinel: false
 redis_sentinel_port: 26379
 redis_sentinel_bind: 0.0.0.0
 redis_sentinel_password: ""
-redis_sentinel_monitors: []
-# - name: master
-#   master: 127.0.0.1
-#   port: 6379
-#   password: ""
-#   quorum: 2
-#   down_after_milliseconds: 1000
-#   parallel_syncs: 1
-#   failover_timeout: 18000
-#   master_ssl_enable: false
-#   master_ssl_ca: ""
-#   master_ssl_cert: ""
-#   master_ssl_key: ""
+redis_sentinel_monitor_name: master
+redis_sentinel_monitor_master: 127.0.0.1
+redis_sentinel_monitor_port: 6379
+redis_sentinel_monitor_password: ""
+redis_sentinel_monitor_quorum: 2
+redis_sentinel_monitor_down_after_milliseconds: 1000
+redis_sentinel_monitor_parallel_syncs: 1
+redis_sentinel_monitor_failover_timeout: 18000
+redis_sentinel_monitor_master_ssl: false
+redis_sentinel_monitor_master_ssl_ca: ""
+redis_sentinel_monitor_master_ssl_cert: ""
+redis_sentinel_monitor_master_ssl_key: ""

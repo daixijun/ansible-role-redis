@@ -89,7 +89,7 @@ protected-mode yes
 
 # Accept connections on the specified port, default is 6379 (IANA #815344).
 # If port 0 is specified Redis will not listen on a TCP socket.
-port {{ redis_port if not redis_ssl_enable else 0 }}
+port {{ redis_port if not redis_ssl else 0 }}
 
 # TCP listen() backlog.
 #
@@ -141,7 +141,7 @@ tcp-keepalive {{ redis_keepalive }}
 #
 # port 0
 # tls-port 6379
-{% if redis_ssl_enable %}
+{% if redis_ssl %}
 tls-port {{ redis_port }}
 {% endif %}
 
@@ -151,7 +151,7 @@ tls-port {{ redis_port }}
 #
 # tls-cert-file redis.crt
 # tls-key-file redis.key
-{% if redis_ssl_enable %}
+{% if redis_ssl %}
 tls-cert-file /etc/redis/ssl/{{ redis_port }}/redis.crt
 tls-key-file /etc/redis/ssl/{{ redis_port }}/redis.key
 {% endif %}
@@ -169,7 +169,7 @@ tls-dh-params-file /etc/redis/ssl/{{ redis_port }}/redis.dh
 #
 # tls-ca-cert-file ca.crt
 # tls-ca-cert-dir /etc/ssl/certs
-{% if redis_ssl_enable %}
+{% if redis_ssl %}
 tls-ca-cert-file /etc/redis/ssl/{{ redis_port }}/ca.crt
 {% endif %}
 
