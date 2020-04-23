@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.0.0](https://github.com/daixijun/ansible-role-redis/compare/v1.0.0...v2.0.0) (2020-04-23)
+
+
+### ⚠ BREAKING CHANGES
+
+* 移除redis_sentinel_monitors 变量
+- 移除 `redis_sentinel_monitors` 变量,使用 `redis_sentinel_monitor_xxx` 配置单实例
+- xxx_ssl_enable 变量修改为 `xxx_ssl`
+
+### Features
+
+* 移除 redis_sentinel 多实例配置 ([a51f108](https://github.com/daixijun/ansible-role-redis/commit/a51f108fdf2951ef63d397efc50ad74da3fa7c80))
+
+
+### Bug Fixes
+
+* 修复老版本 service 配置文件路径问题 ([a9ad3a6](https://github.com/daixijun/ansible-role-redis/commit/a9ad3a69ea71953921ec9cb15d7e16c69690d5b7))
+
 ## [1.0.0](https://github.com/daixijun/ansible-role-redis/compare/v0.0.6...v1.0.0) (2020-04-07)
 
 
