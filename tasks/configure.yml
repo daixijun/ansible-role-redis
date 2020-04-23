@@ -19,7 +19,7 @@
 # 为了删除老版本遗留下来的配置文件
 - name: Remove redis service for single instance
   file:
-    path: /lib/systemd/system/redis_{{ redis_port }}.service
+    path: /usr/lib/systemd/system/redis_{{ redis_port }}.service
     state: absent
 
 - name: Force flush handlers
