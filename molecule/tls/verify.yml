@@ -2,7 +2,7 @@
 - name: Verify
   hosts: all
   tasks:
-    - name: Check redis instance port 3306 state is listening
+    - name: Check redis instance port 6379 state is listening
       wait_for:
         host: 0.0.0.0
         port: 6379

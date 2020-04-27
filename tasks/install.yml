@@ -78,7 +78,6 @@
   until: compile_install_status.finished
   # delay: 5
   retries: 1000
-  no_log: true
   when:
     - compile_and_install is defined
     - compile_and_install is changed
