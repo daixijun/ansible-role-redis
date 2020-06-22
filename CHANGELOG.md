@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.0.1](https://github.com/daixijun/ansible-role-redis/compare/v2.0.0...v2.0.1) (2020-06-22)
+
+
+### Bug Fixes
+
+* 更新默认版本为 6.0.5 ([a2539a3](https://github.com/daixijun/ansible-role-redis/commit/a2539a37a3db6f8a24cfe286624826ef7d7a5dc0))
+* **galaxy:** 去除依赖 ([1041722](https://github.com/daixijun/ansible-role-redis/commit/1041722007ee97db036aa911a73c400b0144d308))
+
 ## [2.0.0](https://github.com/daixijun/ansible-role-redis/compare/v1.0.0...v2.0.0) (2020-04-23)
 
 
