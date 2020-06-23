@@ -13,6 +13,7 @@ ExecStop=/usr/local/libexec/redis-shutdown redis/sentinel_%i
 Type=forking
 User=redis
 Group=redis
+LimitNOFILE=10032
 TimeoutStartSec=10
 TimeoutStopSec=10
 RuntimeDirectory=redis
