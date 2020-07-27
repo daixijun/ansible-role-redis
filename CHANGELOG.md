@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.0.2](https://github.com/daixijun/ansible-role-redis/compare/v2.0.1...v2.0.2) (2020-07-27)
+
+
+### Bug Fixes
+
+* 修复6.0以上版本在未开启TLS功能时,配置文件中包含TLS相关配置导致slave节点crash的问题 ([395422b](https://github.com/daixijun/ansible-role-redis/commit/395422bf5bae674b130eb3b89be085070d68ff79))
+* **sentinel:** 修复 sentinel max open files 默认4096的问题 ([1884528](https://github.com/daixijun/ansible-role-redis/commit/1884528e10cbdafb5826b187cf4568a73e62fdb0))
+
 ### [2.0.1](https://github.com/daixijun/ansible-role-redis/compare/v2.0.0...v2.0.1) (2020-06-22)
 
 
