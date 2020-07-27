@@ -1,13 +1,19 @@
 ---
 - name: Verify
   hosts: all
+  gather_facts: false
   tasks:
-    - name: Watting for HA VIP state is listening
+    - name: Watting for sentinel service started
       wait_for:
-        host: 172.17.0.150
-        port: 6379
+        host: 0.0.0.0
+        port: 26379
         state: started
         timeout: 10
 
-    - name: Redis ping
-      command: /usr/local/bin/redis-cli -h 172.17.0.150 -p 6379 ping
+    - name: Get master addr by name
+      command: /usr/local/bin/redis-cli -h 127.0.0.1 -p 26379 sentinel get-master-addr-by-name master
+      register: __master_addr
+      run_once: true
+
+    - name: Test master ping
+      command: /usr/local/bin/redis-cli -h {{ __master_addr.stdout_lines[0] }} -p {{ __master_addr.stdout_lines[1] }} ping

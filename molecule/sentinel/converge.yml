@@ -2,6 +2,9 @@
 - name: Converge
   hosts: all
   tasks:
+    - name: "Include daixijun.sysctl"
+      include_role:
+        name: "daixijun.sysctl"
     - name: "Include daixijun.redis"
       include_role:
         name: "daixijun.redis"
@@ -11,25 +14,3 @@
         redis_sentinel_monitor_master: "{{ hostvars['sentinel1'].ansible_default_ipv4.address }}"
         redis_sentinel_monitor_port: 6379
         redis_sentinel_monitor_password: ""
-
-    - name: "Include daixijun.keepalived"
-      include_role:
-        name: "daixijun.keepalived"
-      vars:
-        keepalived_vrrp_scripts:
-          - name: chk_redis
-            script: "/usr/bin/bash /etc/redis/sentinel_check_master.sh 26379 master"
-            weight: -10
-        keepalived_vrrp_instances:
-          - name: VI_REDIS
-            state: BACKUP
-            interface: eth0
-            virtual_router_id: 51
-            advert_int: 1
-            track_script:
-              - chk_redis
-            authentication:
-              type: PASS
-              pass: 1111
-            virtual_ipaddress:
-              - 172.17.0.150/16

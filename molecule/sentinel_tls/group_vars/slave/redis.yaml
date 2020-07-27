@@ -1,1 +1,0 @@
-redis_replicaof: "{{ hostvars['sentinel1'].ansible_default_ipv4.address }} 6379" # eg: masterip masterport

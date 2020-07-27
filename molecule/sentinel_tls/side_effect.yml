@@ -1,8 +1,0 @@
----
-- name: Side Effect
-  hosts: sentinel1
-  tasks:
-    - name: Simulate a master outage
-      systemd:
-        name: redis@6379.service
-        state: stopped

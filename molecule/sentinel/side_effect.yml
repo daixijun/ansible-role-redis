@@ -1,8 +1,12 @@
 ---
 - name: Side Effect
-  hosts: sentinel1
+  hosts: all
+  gather_facts: false
   tasks:
     - name: Simulate a master outage
       systemd:
         name: redis@6379.service
         state: stopped
+      run_once: true
+      when:
+        - ('redis_primary' in groups and inventory_hostname in groups['redis_primary']) or (ansible_play_hosts.index(inventory_hostname) == 0)
